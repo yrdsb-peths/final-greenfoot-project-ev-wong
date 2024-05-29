@@ -24,5 +24,34 @@ public class TitleScreen extends World
         addObject(subtitle, 300, 175);
         addObject(insOne, 300, 270);
         addObject(insTwo, 300, 320);
+        prepare();
+    }
+
+    public void act()
+    {
+        if(Greenfoot.isKeyDown("space")) {
+            PokerWorld gameWorld = new PokerWorld();
+            Greenfoot.setWorld(gameWorld);
+        }
+    }
+    
+    /**
+     * Prepare the world for the start of the program.
+     * That is: create the initial objects and add them to the world.
+     */
+    private void prepare()
+    {
+        KS kS = new KS();
+        addObject(kS,47,266);
+        NineD nineD = new NineD();
+        addObject(nineD,66,291);
+        QH qH = new QH();
+        addObject(qH,87,315);
+        FourH fourH = new FourH();
+        addObject(fourH,508,263);
+        AC aC = new AC();
+        addObject(aC,525,290);
+        SixD sixD = new SixD();
+        addObject(sixD,547,315);
     }
 }
