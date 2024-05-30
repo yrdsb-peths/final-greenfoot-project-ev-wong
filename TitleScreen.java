@@ -33,6 +33,11 @@ public class TitleScreen extends World
             PokerWorld gameWorld = new PokerWorld();
             Greenfoot.setWorld(gameWorld);
         }
+        
+        if(Greenfoot.isKeyDown("t")) {
+            Tutorial gameWorld = new Tutorial();
+            Greenfoot.setWorld(gameWorld);
+        }
     }
     
     /**
