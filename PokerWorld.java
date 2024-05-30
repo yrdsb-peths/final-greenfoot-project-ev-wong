@@ -16,7 +16,16 @@ public class PokerWorld extends World
     private List<Bot> bots;
     private List<Card> allCards;
     private int playerChips;
-    private int dealerChips;
+    private int currentBet;
+    private int pot;
+    
+    Label botOneAction = new Label (".", 10);
+    Label botTwoAction = new Label("", 10);
+    Label botThreeAction = new Label("", 10);
+    Label botFourAction = new Label("", 10);
+    Label botFiveAction = new Label("", 10);
+    Label botSixAction = new Label("", 10);
+    Label botSevenAction = new Label("", 10);
     
     public PokerWorld()
     {    
@@ -29,9 +38,10 @@ public class PokerWorld extends World
         allCards = new ArrayList<Card>();
         
         playerChips = 1000;
-        dealerChips = 1000;
+        currentBet = 0;
+        pot = 0;
         
-        addBots(6);
+        addBots(7);
         
         dealPersonalCards();
         dealAllCards();
@@ -43,9 +53,21 @@ public class PokerWorld extends World
             bots.add(bot);
         }
     }
+    
     private void dealPersonalCards() {
-        dealer.dealToPlayer(player);
-        dealer.dealToPlayer(player);
+        dealCardToPlayer(player, 250, 350);
+        dealCardToPlayer(player, 350, 350);
+        for (Bot bot : bots) {
+            dealer.dealToPlayer(bot);
+            dealer.dealToPlayer(bot);
+        }
+    }
+    
+    private void dealCardToPlayer(Player player, int x, int y) {
+        Card card = dealer.dealCard();
+        player.addCard(card);
+        CardDisplay cardDisplay = new CardDisplay(card);
+        addObject(cardDisplay, x, y);
     }
     
     private void dealAllCards() {
@@ -70,5 +92,20 @@ public class PokerWorld extends World
         addObject(cardBack4,200,160);
         CardBack cardBack5 = new CardBack();
         addObject(cardBack5,400,160);
+    }
+    
+    private void playerTurn() {
+        
+    }
+    
+    private void botTurns() {
+        for (Bot bot : bots) {
+            bot.takeTurn(allCards, currentBet, pot);
+        }
+    }
+    
+    public void act() {
+        playerTurn();
+        botTurns();
     }
 }
