@@ -19,7 +19,7 @@ public class Bot extends Player
     public Bot(String name) {
         super();  // Call the superclass constructor to initialize the hand
         this.name = name;  // Set the bot's name
-        this.chips = chips;  // Initialize chips (this seems to be missing initialization)
+        this.chips = 1000;  // Initialize chips (this seems to be missing initialization)
     }
     
     // Getter for the bot's name
@@ -68,10 +68,6 @@ public class Bot extends Player
         // Implement fold logic here if needed
     }
     
-    // Getter for the bot's chips
-    public int getChips() {
-        return chips;  // Return the bot's chips
-    }
     
     public class HandEvaluator {
         public static int evaluateHand(List<Card> hand) {

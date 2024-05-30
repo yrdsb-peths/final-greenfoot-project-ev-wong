@@ -7,6 +7,10 @@ import java.util.ArrayList;
 public class Player  
 {
     private List<Card> hand;  // List to hold the player's hand
+    private boolean isSmallBlind;
+    private boolean isBigBlind;
+    private int chips;
+    private String name;
     
     // Constructor to initialize the player's hand
     public Player() {
@@ -23,8 +27,36 @@ public class Player
         return hand;  // Return the list representing the player's hand
     }
     
+    public void setChips(int chips) {
+        this.chips = chips;
+    }
+    
+    public int getChips() {
+        return chips;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
     // Method to check if the player is human (to be overridden by subclasses)
     public boolean isHuman() {
         return false;  // Default implementation assumes non-human player
+    }
+    
+    public boolean isSmallBlind() {
+        return isSmallBlind;
+    }
+    
+    public boolean isBigBlind() {
+        return isBigBlind;
+    }
+    
+    public void setSmallBlind(boolean isSmallBlind) {
+        this.isSmallBlind = isSmallBlind;
+    }
+    
+    public void setBigBlind(boolean isBigBlind) {
+        this.isBigBlind = isBigBlind;
     }
 }

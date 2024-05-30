@@ -1,22 +1,23 @@
 /**
- * Dealer class represents a dealer in the poker game.
- */
+* Manages the deck of cards and deals cards to players. 
+*/
 public class Dealer  
 {
-    private Deck deck;  // Reference to the deck
+    private Deck deck;  // Deck of cards
     
-    // Constructor to create a dealer with a deck
+    // Creates a new dealer with a fresh deck of cards.
     public Dealer() {
-        deck = new Deck();  // Create a new deck for the dealer
+        deck = new Deck();  // Initialize deck
+        deck.shuffle(); // Shuffles deck
     }
     
-    // Method to deal a card from the deck
+    // Deals a card from the deck to a player.
     public Card dealCard() {
-        return deck.dealCard();  // Delegate to the deck to deal a card
+        return deck.removeCard();  // Remove and return a card
     }
     
-    // Method to deal a card to a player
+    // Deals a card to a player.
     public void dealToPlayer(Player player) {
-        player.addCard(dealCard());  // Deal a card to the player
+        player.addCard(dealCard());  // Give a card to player
     }
 }

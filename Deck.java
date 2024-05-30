@@ -22,13 +22,13 @@ public class Deck extends Actor
         shuffle();  // Shuffle the deck
     }
     
-    // Method to shuffle the deck
+    // Method to shuffl e the deck
     public void shuffle() {
         Collections.shuffle(cards);  // Use Java's Collections.shuffle() method
     }
     
     // Method to deal a card from the deck
-    public Card dealCard() {
+    public Card removeCard() {
         return cards.remove(0);  // Remove and return the first card from the deck
     }
 
