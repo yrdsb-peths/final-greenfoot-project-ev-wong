@@ -1,22 +1,22 @@
 /**
- * Write a description of class Dealer here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Dealer class represents a dealer in the poker game.
  */
 public class Dealer  
 {
-    private Deck deck;
+    private Deck deck;  // Reference to the deck
     
+    // Constructor to create a dealer with a deck
     public Dealer() {
-        deck = new Deck();
+        deck = new Deck();  // Create a new deck for the dealer
     }
     
+    // Method to deal a card from the deck
     public Card dealCard() {
-        return deck.dealCard();
+        return deck.dealCard();  // Delegate to the deck to deal a card
     }
     
+    // Method to deal a card to a player
     public void dealToPlayer(Player player) {
-        player.addCard(dealCard());
+        player.addCard(dealCard());  // Deal a card to the player
     }
 }

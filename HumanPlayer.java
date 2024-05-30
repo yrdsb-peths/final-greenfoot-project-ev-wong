@@ -1,16 +1,15 @@
 /**
- * Write a description of class Human here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * HumanPlayer class represents a human player in the poker game.
  */
 public class HumanPlayer extends Player  
 {
+    // Method to check if the player is human (overrides superclass method)
     public boolean isHuman() {
-        return true;
+        return true; 
     }
     
+    // Method to handle the human player's turn
     public void humanTurn() {
-        
+        // Implement human player's turn logic here if needed
     }
 }

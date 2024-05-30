@@ -7,59 +7,70 @@ import java.util.Collections;
  * @author (your name) 
  * @version (a version number or a date)
  */
+/**
+ * Bot class represents a computer-controlled player (bot) in the poker game.
+ */
 public class Bot extends Player 
 {
-    private String name;
-    private int chips;
+    private String name;  // Name of the bot
+    private int chips;  // Chips for the bot
     
+    // Constructor to create a bot with a name
     public Bot(String name) {
-        super();
-        this.name = name;
-        this.chips = chips;
+        super();  // Call the superclass constructor to initialize the hand
+        this.name = name;  // Set the bot's name
+        this.chips = chips;  // Initialize chips (this seems to be missing initialization)
     }
     
+    // Getter for the bot's name
     public String getName() {
-        return name;
+        return name;  // Return the bot's name
     }
     
+    // Method to handle the bot's turn
     public void botTurn(List<Card> allCards, int currentBet, int pot) {
-        List<Card> combinedHand = new ArrayList<>(getHand());
-        combinedHand.addAll(allCards);
-        int handStrength = HandEvaluator.evaluateHand(combinedHand);
-
-        // Simplified logic: Fold on weak hands, bet or call on strong hands
+        List<Card> combinedHand = new ArrayList<>(getHand());  // Combine bot's hand and community cards
+        combinedHand.addAll(allCards);  // Add community cards to the bot's hand
+        int handStrength = HandEvaluator.evaluateHand(combinedHand);  // Evaluate hand strength
+        
+        // Simplified logic for bot's actions based on hand strength
         if (handStrength <= 2) {
-            fold();
+            fold();  // Fold on weak hands
         } else if (handStrength <= 4) {
             if (currentBet > 0) {
-                call(currentBet);
+                call(currentBet);  // Call if there's a bet
             } else {
-                check();
+                check();  // Check if no bet
             }
         } else {
-            raise(currentBet, pot);
+            raise(currentBet, pot);  // Raise on strong hands
         }
     }
     
+    // Method to handle bot checking
     private void check() {
-        
+        // Implement check logic here if needed
     }
     
+    // Method to handle bot calling
     private void call(int currentBet) {
-        chips -= currentBet;
+        chips -= currentBet;  // Deduct chips for calling
     }
     
+    // Method to handle bot raising
     private void raise(int currentBet, int pot) {
-        int raiseAmount = (int) (pot * 05);
-        chips -= (currentBet + raiseAmount);
+        int raiseAmount = (int) (pot * 0.5);  // Example raise amount (adjust as needed)
+        chips -= (currentBet + raiseAmount);  // Deduct chips for raising
     }
     
+    // Method to handle bot folding
     private void fold() {
-        
+        // Implement fold logic here if needed
     }
     
+    // Getter for the bot's chips
     public int getChips() {
-        return chips;
+        return chips;  // Return the bot's chips
     }
     
     public class HandEvaluator {
@@ -99,6 +110,5 @@ public class Bot extends Player
     
             return 1; // High card
         }
-}
-
+    }
 }

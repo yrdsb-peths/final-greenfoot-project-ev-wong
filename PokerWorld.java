@@ -4,23 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Write a description of class PokerWorld here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * The main world where the poker game takes place.
  */
 public class PokerWorld extends World
 {
-    private int currentPlayerIndex;
-    private List<Player> players;
-    private Dealer dealer;
-    private Player player;
-    private List<Bot> bots;
-    private List<Card> allCards;
-    private int playerChips;
-    private int currentBet;
-    private int pot;
+    private List<Player> players;  // List to hold all players
+    private Dealer dealer;  // Dealer object
+    private Player player;  // Human player
+    private List<Bot> bots;  // List to hold all bots
+    private List<Card> allCards;  // List to hold all community cards
+    private int currentPlayerIndex;  // Index of the current player
+    private int playerChips;  // Chips for the player
+    private int currentBet;  // Current bet amount
+    private int pot;  // Total pot amount
     
+    // Labels to display bot actions
     Label botOneAction = new Label (".", 10);
     Label botTwoAction = new Label("", 10);
     Label botThreeAction = new Label("", 10);
@@ -29,56 +27,62 @@ public class PokerWorld extends World
     Label botSixAction = new Label("", 10);
     Label botSevenAction = new Label("", 10);
     
+    /**
+     * Constructor for objects of class PokerWorld.
+     */
     public PokerWorld()
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(600, 400, 1); 
-        prepare();
-        dealer = new Dealer();
-        player = new Player();
-        bots = new ArrayList<Bot>();
-        allCards = new ArrayList<Card>();
-        players = new ArrayList<>();
-        currentPlayerIndex = 0;
+        prepare();  // Initialize the world
+        dealer = new Dealer();  // Create a dealer
+        player = new Player();  // Create a human player
+        bots = new ArrayList<Bot>();  // Initialize list for bots
+        allCards = new ArrayList<Card>();  // Initialize list for community cards
+        players = new ArrayList<>();  // Initialize list for all players
         
-        playerChips = 1000;
-        currentBet = 0;
-        pot = 0;
+        currentPlayerIndex = 0;  // Start with the first player
+        playerChips = 1000;  // Set initial chips for the player
+        currentBet = 0;  // Initialize current bet
+        pot = 0;  // Initialize pot
         
-        players.add(new HumanPlayer());
-        addBots(7);
+        players.add(new HumanPlayer());  // Add human player to the list
+        addBots(7);  // Add bots to the game
         
         dealPersonalCards();
         dealAllCards();
     }
     
+    // Add bots to the game
     private void addBots(int numberOfBots) {
         for (int i = 1; i <= numberOfBots; i++) {
-            Bot bot = new Bot("Bot " + i);
-            bots.add(bot);
-            players.add(new Bot("Bot" + i));
+            Bot bot = new Bot("Bot " + i);  // Create a new bot
+            bots.add(bot);  // Add bot to the list
+            players.add(new Bot("Bot" + i));  // Add bot to the players list
         }
     }
     
+    // Deal personal cards to players
     private void dealPersonalCards() {
-        dealCardToPlayer(player, 275, 350);
-        dealCardToPlayer(player, 325, 350);
+        dealCardToPlayer(player, 275, 350);  // Deal a card to the player
+        dealCardToPlayer(player, 325, 350);  // Deal another card to the player
         for (Bot bot : bots) {
-            dealer.dealToPlayer(bot);
-            dealer.dealToPlayer(bot);
+            dealer.dealToPlayer(bot);  // Deal cards to bots
+            dealer.dealToPlayer(bot);  // Deal second card to bots
         }
     }
     
+    // Deal a card to a player at specified coordinates
     private void dealCardToPlayer(Player player, int x, int y) {
-        Card card = dealer.dealCard();
-        player.addCard(card);
-        CardDisplay cardDisplay = new CardDisplay(card);
-        addObject(cardDisplay, x, y);
+        Card card = dealer.dealCard();  // Deal a card from the deck
+        player.addCard(card);  // Add the card to the player's hand
+        CardDisplay cardDisplay = new CardDisplay(card);  // Create a card display object
+        addObject(cardDisplay, x, y);  // Add the card display to the world
     }
     
+    // Deal community cards
     private void dealAllCards() {
         for (int i= 0; i < 5; i++) {
-            allCards.add(dealer.dealCard());
+            allCards.add(dealer.dealCard());  // Deal a card to the community cards
         }
     }
     
@@ -88,6 +92,7 @@ public class PokerWorld extends World
      */
     private void prepare()
     {
+        // Add card backs to the world
         CardBack cardBack1 = new CardBack();
         addObject(cardBack1,300,160);
         CardBack cardBack2 = new CardBack();
@@ -100,14 +105,14 @@ public class PokerWorld extends World
         addObject(cardBack5,400,160);  
     }
     
+    private void resetRound() {
+        currentBet = 0;
+        pot = 0;
+        allCards.clear();
+    }
+    
+    // Act method for game logic
     public void act() {
-        if (players != null && currentPlayerIndex >= 0 && currentPlayerIndex < players.size()) {
-            Player currentPlayer = players.get(currentPlayerIndex);
-            if (currentPlayer.isHuman()) {
-                ((HumanPlayer) currentPlayer).humanTurn();
-            } else {
-                ((Bot) currentPlayer).botTurn(allCards, currentBet, pot);
-            }
-        }
+    
     }
 }
