@@ -46,17 +46,5 @@ public class TitleScreen extends World
      */
     private void prepare()
     {
-        KS kS = new KS();
-        addObject(kS,47,266);
-        NineD nineD = new NineD();
-        addObject(nineD,66,291);
-        QH qH = new QH();
-        addObject(qH,87,315);
-        FourH fourH = new FourH();
-        addObject(fourH,508,263);
-        AC aC = new AC();
-        addObject(aC,525,290);
-        SixD sixD = new SixD();
-        addObject(sixD,547,315);
     }
 }

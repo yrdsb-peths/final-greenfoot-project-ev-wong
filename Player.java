@@ -22,4 +22,8 @@ public class Player
     public List<Card> getHand() {
         return hand;
     }
+    
+    public boolean isHuman() {
+        return false;
+    }
 }

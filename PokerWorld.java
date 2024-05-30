@@ -11,6 +11,8 @@ import java.util.Collections;
  */
 public class PokerWorld extends World
 {
+    private int currentPlayerIndex;
+    private List<Player> players;
     private Dealer dealer;
     private Player player;
     private List<Bot> bots;
@@ -36,11 +38,14 @@ public class PokerWorld extends World
         player = new Player();
         bots = new ArrayList<Bot>();
         allCards = new ArrayList<Card>();
+        players = new ArrayList<>();
+        currentPlayerIndex = 0;
         
         playerChips = 1000;
         currentBet = 0;
         pot = 0;
         
+        players.add(new HumanPlayer());
         addBots(7);
         
         dealPersonalCards();
@@ -51,12 +56,13 @@ public class PokerWorld extends World
         for (int i = 1; i <= numberOfBots; i++) {
             Bot bot = new Bot("Bot " + i);
             bots.add(bot);
+            players.add(new Bot("Bot" + i));
         }
     }
     
     private void dealPersonalCards() {
-        dealCardToPlayer(player, 250, 350);
-        dealCardToPlayer(player, 350, 350);
+        dealCardToPlayer(player, 275, 350);
+        dealCardToPlayer(player, 325, 350);
         for (Bot bot : bots) {
             dealer.dealToPlayer(bot);
             dealer.dealToPlayer(bot);
@@ -91,21 +97,17 @@ public class PokerWorld extends World
         CardBack cardBack4 = new CardBack();
         addObject(cardBack4,200,160);
         CardBack cardBack5 = new CardBack();
-        addObject(cardBack5,400,160);
-    }
-    
-    private void playerTurn() {
-        
-    }
-    
-    private void botTurns() {
-        for (Bot bot : bots) {
-            bot.takeTurn(allCards, currentBet, pot);
-        }
+        addObject(cardBack5,400,160);  
     }
     
     public void act() {
-        playerTurn();
-        botTurns();
+        if (players != null && currentPlayerIndex >= 0 && currentPlayerIndex < players.size()) {
+            Player currentPlayer = players.get(currentPlayerIndex);
+            if (currentPlayer.isHuman()) {
+                ((HumanPlayer) currentPlayer).humanTurn();
+            } else {
+                ((Bot) currentPlayer).botTurn(allCards, currentBet, pot);
+            }
+        }
     }
 }

@@ -22,9 +22,9 @@ public class Bot extends Player
         return name;
     }
     
-    public void takeTurn(List<Card> communityCards, int currentBet, int pot) {
+    public void botTurn(List<Card> allCards, int currentBet, int pot) {
         List<Card> combinedHand = new ArrayList<>(getHand());
-        combinedHand.addAll(communityCards);
+        combinedHand.addAll(allCards);
         int handStrength = HandEvaluator.evaluateHand(combinedHand);
 
         // Simplified logic: Fold on weak hands, bet or call on strong hands
