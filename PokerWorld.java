@@ -11,6 +11,7 @@ public class PokerWorld extends World
     private List<Player> players;  // List to hold all players
     private Dealer dealer;  // Dealer object
     private Player player;  // Human player
+    private House house; //House
     private List<Bot> bots;  // List to hold all bots
     private List<Card> allCards;  // List to hold all community cards
     private int currentPlayerIndex;  // Index of the current player
@@ -19,6 +20,7 @@ public class PokerWorld extends World
     private int pot;  // Total pot amount
     private int bb; //big blind
     private int sb; //small blind
+    public int humanBetAmount; //human bet
     private boolean roundInProgress; // Tracker
     private String smallBlindPlayer;
     private String bigBlindPlayer;
@@ -33,6 +35,8 @@ public class PokerWorld extends World
     Label botSevenAction = new Label("", 10);
     Label smallBlindLabel = new Label("Small Blind: ", 20);
     Label bigBlindLabel = new Label("Big Blind: ", 20);
+    Label humanBetLabel = new Label("Your bet: " + humanBetAmount, 30);
+
     
     /**
      * Constructor for objects of class PokerWorld.
@@ -43,12 +47,12 @@ public class PokerWorld extends World
         prepare();  // Initialize the world
         dealer = new Dealer();  // Create a dealer
         player = new Player(); // Create a player
+        house = new House(); // Create house
         bots = new ArrayList<Bot>();  // Initialize list for bots
         allCards = new ArrayList<Card>();  // Initialize list for community cards
         players = new ArrayList<>();  // Initialize list for all players
         sb = 0;
-        bb = 1;
-        
+        bb = 1;        
         roundInProgress = false;
         
         currentPlayerIndex = 0;  // Start with the first player
@@ -61,6 +65,7 @@ public class PokerWorld extends World
         
         addObject(smallBlindLabel, 80, 340);
         addObject(bigBlindLabel, 73, 370);
+        addObject(humanBetLabel, 475, 360);
     }
     
     // Act method for game logic
@@ -84,28 +89,97 @@ public class PokerWorld extends World
         dealTableCardThree();
         bettingRound();
         calculateWinner();
-        rotatePositions();
+        rotatePositions();  
     }
     
     public void bettingRound() {
+        /*
+        currentBet = 20;
+        int lastToActIndex = (currentPlayerIndex + bb + players.size() - 1) % players.size();
         
+        boolean roundCompleted = false;
+        
+        while(!roundCompleted) {
+            roundCompleted = true;
+            
+            for (int i = 0; i < players.size(); i++) {
+                Player currentPlayer = players.get((currentPlayerIndex + i) % players.size());
+                
+                if(currentPlayer.isInRound() && currentPlayer.getChips() > 0) {
+                    PlayerAction action = new PlayerAction(action, currentBet);                 
+                    switch (action.getType()) {
+                        case FOLD:
+                            currentPlayer.setInRound(false);
+                            break;
+                        case CALL:
+                            int callAmount = currentBet - currentPlayer.getCurrentBet();
+                            currentPlayer.setChips(currentPlayer.getChips() - callAmount);
+                            currentPlayer.setCurrentBet(currentBet);
+                            pot += callAmount;
+                            break;
+                        case RAISE:
+                            int raiseAmount = action.getAmount();
+                            currentBet += raiseAmount;
+                            currentPlayer.setChips(currentPlayer.getChips() - (currentBet - currentPlayer.getCurrentBet()));
+                            currentPlayer.setCurrentBet(currentBet);
+                            pot += currentBet - currentPlayer.getCurrentBet();
+                            lastToActIndex = (currentPlayerIndex + i + players.size() - 1) % players.size();
+                            roundCompleted = false;
+                            break;
+                        case CHECK:
+                            // No chips are deducted for checking
+                            break;
+                    }
+                }
+                
+                if (i == lastToActIndex) {
+                    roundCompleted = true;
+                    break;
+                }
+            }
+        }
+        for (Player player : players) {
+            player.setCurrentBet(0);
+        }
+        */
     }
     
     public void dealTableCardOne() {
-    
+        dealCardToHouse(house, 200, 160);
     }
     
     public void dealTableCardTwo() {
-        
+        dealCardToHouse(house, 250, 160);
     }
     
     public void dealTableCardThree() {
-        
+        dealCardToHouse(house, 300, 160);
+        dealCardToHouse(house, 350, 160);
+        dealCardToHouse(house, 400, 160);
     }
     
     public void calculateWinner() {
+        Player bestPlayer = null;
+        int bestHandValue = -1;
         
+        for (Player player : players) {
+            List<Card> combinedHand = new ArrayList<>(player.getHand());
+            combinedHand.addAll(house.getTableCards());
+            int handValue = HandEvaluator.evaluateHand(combinedHand);
+            
+            if (handValue > bestHandValue) {
+                bestHandValue = handValue;
+                bestPlayer = player;
+            }
+        }
+    
+        if (bestPlayer != null) {
+            bestPlayer.setChips(bestPlayer.getChips() + pot);
+            pot = 0;
+            
+        }
     }
+
     
     public void assignBlinds() {
         //Reset blinds
@@ -131,7 +205,8 @@ public class PokerWorld extends World
     }
     
     private void rotatePositions() {
-
+        sb += 1;
+        bb += 1;
     }
     
     private void deductBlindChips() {
@@ -143,6 +218,22 @@ public class PokerWorld extends World
                 player.setChips(player.getChips() - 20);
                 pot += 20;
             }
+        }
+    }
+
+    private void humanBet() {
+        if(Greenfoot.isKeyDown("left")) {
+            humanBetAmount += 10;
+        }
+        if(Greenfoot.isKeyDown("right")) {
+            humanBetAmount -= 10;
+        }
+    }
+    
+    public void humanTurn() {
+        while(!Greenfoot.isKeyDown("enter")) {
+            humanBet();
+            humanBetLabel.setValue("Your Bet: " + humanBetAmount);
         }
     }
     
@@ -166,12 +257,20 @@ public class PokerWorld extends World
         }
     }
     
-    // Deal a card to a player at specified coordinates
+    // Deal a card to a player
     private void dealCardToPlayer(Player player, int x, int y) {
         Card card = dealer.dealCard();  // Deal a card from the deck
         player.addCard(card);  // Add the card to the player's hand
         CardDisplay cardDisplay = new CardDisplay(card);  // Create a card display object
         addObject(cardDisplay, x, y);  // Add the card display to the world
+    }
+    
+    // Deal a card to house
+    private void dealCardToHouse(House house, int x, int y) {
+        Card card = dealer.dealCard();
+        house.addTableCard(card);
+        CardDisplay cardDisplay = new CardDisplay(card);
+        addObject(cardDisplay, x, y);
     }
     
     private void dealToBot(Bot bot) {

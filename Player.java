@@ -9,6 +9,8 @@ public class Player
     private List<Card> hand;  // List to hold the player's hand
     private boolean isSmallBlind;
     private boolean isBigBlind;
+    private boolean inRound;
+    private int currentBet;
     private int chips;
     private String name;
     
@@ -58,5 +60,21 @@ public class Player
     
     public void setBigBlind(boolean isBigBlind) {
         this.isBigBlind = isBigBlind;
+    }
+    
+    public boolean isInRound() {
+        return inRound;
+    }
+    
+    public void setInRound(boolean inRound) {
+        this.inRound = inRound;
+    }
+    
+    public int getCurrentBet() {
+        return currentBet;
+    }
+    
+    public void setCurrentBet(int currentBet) {
+        this.currentBet = currentBet;
     }
 }
