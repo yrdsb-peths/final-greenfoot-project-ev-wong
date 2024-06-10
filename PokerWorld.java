@@ -36,6 +36,11 @@ public class PokerWorld extends World
     Label smallBlindLabel = new Label("Small Blind: ", 20);
     Label bigBlindLabel = new Label("Big Blind: ", 20);
     Label humanBetLabel = new Label("Your bet: " + humanBetAmount, 30);
+    
+    //Sound effects
+    GreenfootSound shuffleSound = new GreenfootSound("cardShuffle.mp3");
+    GreenfootSound music = new GreenfootSound("bgmusic.mp3");
+    GreenfootSound dealSound = new GreenfootSound("cardPlace1.mp3");
 
     
     /**
@@ -70,6 +75,7 @@ public class PokerWorld extends World
     
     // Act method for game logic
     public void act() {
+        music.play();
         if (roundInProgress == false) {
             startRound();
         }
@@ -80,6 +86,7 @@ public class PokerWorld extends World
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         assignBlinds();
         deductBlindChips();
+        shuffleSound.play();
         dealPersonalCards();
         bettingRound();
         dealTableCardOne();
@@ -93,66 +100,21 @@ public class PokerWorld extends World
     }
     
     public void bettingRound() {
-        /*
-        currentBet = 20;
-        int lastToActIndex = (currentPlayerIndex + bb + players.size() - 1) % players.size();
         
-        boolean roundCompleted = false;
-        
-        while(!roundCompleted) {
-            roundCompleted = true;
-            
-            for (int i = 0; i < players.size(); i++) {
-                Player currentPlayer = players.get((currentPlayerIndex + i) % players.size());
-                
-                if(currentPlayer.isInRound() && currentPlayer.getChips() > 0) {
-                    PlayerAction action = new PlayerAction(action, currentBet);                 
-                    switch (action.getType()) {
-                        case FOLD:
-                            currentPlayer.setInRound(false);
-                            break;
-                        case CALL:
-                            int callAmount = currentBet - currentPlayer.getCurrentBet();
-                            currentPlayer.setChips(currentPlayer.getChips() - callAmount);
-                            currentPlayer.setCurrentBet(currentBet);
-                            pot += callAmount;
-                            break;
-                        case RAISE:
-                            int raiseAmount = action.getAmount();
-                            currentBet += raiseAmount;
-                            currentPlayer.setChips(currentPlayer.getChips() - (currentBet - currentPlayer.getCurrentBet()));
-                            currentPlayer.setCurrentBet(currentBet);
-                            pot += currentBet - currentPlayer.getCurrentBet();
-                            lastToActIndex = (currentPlayerIndex + i + players.size() - 1) % players.size();
-                            roundCompleted = false;
-                            break;
-                        case CHECK:
-                            // No chips are deducted for checking
-                            break;
-                    }
-                }
-                
-                if (i == lastToActIndex) {
-                    roundCompleted = true;
-                    break;
-                }
-            }
-        }
-        for (Player player : players) {
-            player.setCurrentBet(0);
-        }
-        */
     }
     
     public void dealTableCardOne() {
+        dealSound.play();
         dealCardToHouse(house, 200, 160);
     }
     
     public void dealTableCardTwo() {
+        dealSound.play();
         dealCardToHouse(house, 250, 160);
     }
     
     public void dealTableCardThree() {
+        dealSound.play();
         dealCardToHouse(house, 300, 160);
         dealCardToHouse(house, 350, 160);
         dealCardToHouse(house, 400, 160);
@@ -176,7 +138,6 @@ public class PokerWorld extends World
         if (bestPlayer != null) {
             bestPlayer.setChips(bestPlayer.getChips() + pot);
             pot = 0;
-            
         }
     }
 
@@ -208,7 +169,7 @@ public class PokerWorld extends World
         sb += 1;
         bb += 1;
     }
-    
+        
     private void deductBlindChips() {
         for(Player player : players) {
             if (player.isSmallBlind()) {

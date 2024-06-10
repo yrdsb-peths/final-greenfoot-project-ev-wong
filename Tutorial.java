@@ -9,7 +9,7 @@ public class Tutorial extends World
     Label one = new Label ("Tutorial", 90);
     Label two = new Label ("For more information on how to play", 30);  
     Label three = new Label ("Texas Hold Em' poker, refer to Google", 30);
-    Label four = new Label ("Bet chips/raise using the <-- and --> arrows", 30);
+    Label four = new Label ("Raise using <r> (can only raise by 20)", 30);
     Label five = new Label ("Fold using <f>, Check/Call using <c>", 30);
     Label six = new Label ("Click <ESC> to return to main menu", 30);
     

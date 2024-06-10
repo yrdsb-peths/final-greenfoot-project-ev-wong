@@ -10,6 +10,8 @@ public class TitleScreen extends World
     Label subtitle = new Label("Classic Texas Hold Em'", 59);
     Label insOne = new Label("press <space> to begin", 40);
     Label insTwo = new Label("press <t> for tutorial", 40);
+    
+    GreenfootSound music = new GreenfootSound("bgmusic.mp3");
 
     /**
      * Constructor for objects of class TitleScreen.
@@ -29,6 +31,7 @@ public class TitleScreen extends World
     // Act method for user input
     public void act()
     {
+        
         // Start the game if space is pressed
         if(Greenfoot.isKeyDown("space")) {
             PokerWorld gameWorld = new PokerWorld();

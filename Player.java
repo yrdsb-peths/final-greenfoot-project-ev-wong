@@ -77,4 +77,28 @@ public class Player
     public void setCurrentBet(int currentBet) {
         this.currentBet = currentBet;
     }
+    
+    public void bet(int amount) {
+        if (amount <= chips) {
+            chips -= amount;
+            currentBet += amount;
+        }
+    }
+    
+    public void fold() {
+        inRound = false;
+    }
+    
+    public void raise() {
+        chips -= 20;
+    }
+    
+    public void call() {
+        chips -= currentBet;
+    }
+    
+    public void check() {
+        // Implement check logic here if needed
+    }
+    
 }
