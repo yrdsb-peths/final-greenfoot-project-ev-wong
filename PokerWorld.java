@@ -32,13 +32,7 @@ public class PokerWorld extends World
     private HumanPlayer human;
     
     // Labels to display bot actions
-    Label botOneAction = new Label (".", 10);
-    Label botTwoAction = new Label("", 10);
-    Label botThreeAction = new Label("", 10);
-    Label botFourAction = new Label("", 10);
-    Label botFiveAction = new Label("", 10);
-    Label botSixAction = new Label("", 10);
-    Label botSevenAction = new Label("", 10);
+    Label inGameLabel = new Label ("", 17);
     Label smallBlindLabel = new Label("Small Blind: ", 20);
     Label bigBlindLabel = new Label("Big Blind: ", 20);
     Label humanBetLabel = new Label("Your chips: " + humanChips, 20);
@@ -87,6 +81,7 @@ public class PokerWorld extends World
         addObject(currentBetLabel, 500, 360);
         addObject(potLabel, 475, 380);
         addObject(winnerLabel, 300, 100);
+        addObject(inGameLabel, 300, 230);
         
         updateHumanBetLabel();
     }
@@ -123,6 +118,7 @@ public class PokerWorld extends World
         dealer.resetDeck(); // Reinitialize the dealer to reset the deck
         house = new House(); // Create house
         allCards = new ArrayList<Card>();  // Initialize list for community cards
+        inGameLabel.setValue("In Game " + players);
         for (Player player : players) {
             player.clearHand(); // Clear the hand of each player
             player.setInRound(true); // Reset the in-round status of each player
