@@ -31,7 +31,6 @@ public class TitleScreen extends World
     // Act method for user input
     public void act()
     {
-        
         // Start the game if space is pressed
         if(Greenfoot.isKeyDown("space")) {
             PokerWorld gameWorld = new PokerWorld();

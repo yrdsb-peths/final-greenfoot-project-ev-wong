@@ -15,7 +15,9 @@ public class Player {
     
     public Player() {
         hand = new ArrayList<Card>();  
+        chips = 1000;
         currentBet = 0;
+        inRound = true;
     }
     
     public void addCard(Card card) {
@@ -90,14 +92,12 @@ public class Player {
     }
     
     public void raise() {
-        if (chips >= 20) {
-            chips -= 20;
-            currentBet += 20;
-        }
+        currentBet += 20;
+        this.chips -= currentBet;
     }
     
     public void call() {
-        chips -= currentBet;
+        this.chips -= currentBet;
     }
     
     public void check() {

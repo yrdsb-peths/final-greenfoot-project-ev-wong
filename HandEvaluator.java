@@ -1,46 +1,91 @@
-import java.util.List;
+import java.util.*;
 
-/**
- * Write a description of class HandEvaluator here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class HandEvaluator {
     public static int evaluateHand(List<Card> hand) {
-        hand.sort((card1, card2) -> card1.getRank() - card2.getRank());
+        Map<Integer, Integer> rankCounts = new HashMap<>();
+        Map<String, Integer> suitCounts = new HashMap<>();
+        List<Integer> ranks = new ArrayList<>();
+        List<String> suits = new ArrayList<>();
 
-        boolean isFlush = hand.stream().allMatch(card -> card.getSuit().equals(hand.get(0).getSuit()));
-        boolean isStraight = true;
-        for (int i = 0; i < hand.size() - 1; i++) {
-            if (hand.get(i + 1).getRank() != hand.get(i).getRank() + 1) {
-                isStraight = false;
-                break;
+        for (Card card : hand) {
+            rankCounts.put(card.getRank(), rankCounts.getOrDefault(card.getRank(), 0) + 1);
+            suitCounts.put(card.getSuit(), suitCounts.getOrDefault(card.getSuit(), 0) + 1);
+            ranks.add(card.getRank());
+            suits.add(card.getSuit());
+        }
+
+        Collections.sort(ranks);
+
+        if (containsFlush(suitCounts)) {
+            if (containsStraight(ranks)) {
+                return 9;  // Straight Flush
+            }
+            return 6;  // Flush
+        }
+
+        if (containsFourOfAKind(rankCounts)) {
+            return 8;  // Four of a Kind
+        }
+
+        if (containsFullHouse(rankCounts)) {
+            return 7;  // Full House
+        }
+
+        if (containsStraight(ranks)) {
+            return 5;  // Straight
+        }
+
+        if (containsThreeOfAKind(rankCounts)) {
+            return 4;  // Three of a Kind
+        }
+
+        if (containsTwoPair(rankCounts)) {
+            return 3;  // Two Pair
+        }
+
+        if (containsPair(rankCounts)) {
+            return 2;  // Pair
+        }
+
+        return 1;  // High Card (No other hand found)
+    }
+
+    private static boolean containsFlush(Map<String, Integer> suitCounts) {
+        return suitCounts.containsValue(5);  // 5 cards of the same suit
+    }
+
+    private static boolean containsFourOfAKind(Map<Integer, Integer> rankCounts) {
+        return rankCounts.containsValue(4);  // Four cards of the same rank
+    }
+
+    private static boolean containsFullHouse(Map<Integer, Integer> rankCounts) {
+        return rankCounts.containsValue(3) && rankCounts.containsValue(2);  // Three of a kind and a pair
+    }
+
+    private static boolean containsStraight(List<Integer> ranks) {
+        for (int i = 0; i < ranks.size() - 1; i++) {
+            if (ranks.get(i + 1) - ranks.get(i) != 1) {
+                return false;
             }
         }
+        return true;
+    }
 
-        if (isFlush && isStraight) return 9; // Straight flush
-        if (isFlush) return 6; // Flush
-        if (isStraight) return 5; // Straight
+    private static boolean containsThreeOfAKind(Map<Integer, Integer> rankCounts) {
+        return rankCounts.containsValue(3);  // Three cards of the same rank
+    }
 
-        int[] rankCounts = new int[14]; // Index 0 unused, ranks 1-13
-        for (Card card : hand) {
-            rankCounts[card.getRank()]++;
+    private static boolean containsTwoPair(Map<Integer, Integer> rankCounts) {
+        int pairs = 0;
+        for (int count : rankCounts.values()) {
+            if (count == 2) {
+                pairs++;
+            }
         }
+        return pairs == 2;  // Two pairs
+    }
 
-        int pairs = 0, threes = 0, fours = 0;
-        for (int count : rankCounts) {
-            if (count == 2) pairs++;
-            if (count == 3) threes++;
-            if (count == 4) fours++;
-        }
-
-        if (fours > 0) return 8; // Four of a kind
-        if (threes > 0 && pairs > 0) return 7; // Full house
-        if (threes > 0) return 4; // Three of a kind
-        if (pairs > 1) return 3; // Two pairs
-        if (pairs > 0) return 2; // Pair
-
-        return 1; // High card
+    private static boolean containsPair(Map<Integer, Integer> rankCounts) {
+        return rankCounts.containsValue(2);  // Two cards of the same rank
     }
 }
