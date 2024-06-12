@@ -23,6 +23,7 @@ public class PokerWorld extends World
     private int randomNum; //random number
     public int humanBetAmount; //human bet
     private int humanChips;
+    private int callChips;
     private boolean roundInProgress; // Tracker
     private boolean waitForHumanInput;
     private boolean musicPlaying;
@@ -71,6 +72,7 @@ public class PokerWorld extends World
         
         currentPlayerIndex = 0;  // Start with the first player
         currentBet = 0;  // Initialize current bet
+        callChips = 0; // Initialize call chips
         pot = 0;  // Initialize pot
         
         dealer = new Dealer();
@@ -83,7 +85,7 @@ public class PokerWorld extends World
         addObject(bigBlindLabel, 73, 370);
         addObject(humanBetLabel, 506, 340);
         addObject(currentBetLabel, 500, 360);
-        addObject(potLabel, 470, 380);
+        addObject(potLabel, 475, 380);
         addObject(winnerLabel, 300, 100);
         
         updateHumanBetLabel();
@@ -127,8 +129,8 @@ public class PokerWorld extends World
         }
         house.clearTableCards(); // Clear the community cards from the table
         allCards.clear(); // Clear the allCards list if used
-        currentBet = 0;
-        pot = 0;
+        currentBet = 20;
+        pot = 30;
         CardBack cardBack1 = new CardBack();
         addObject(cardBack1,300,160);
         CardBack cardBack2 = new CardBack();
@@ -139,7 +141,9 @@ public class PokerWorld extends World
         addObject(cardBack4,200,160);
         CardBack cardBack5 = new CardBack();
         addObject(cardBack5,400,160); 
-        updateHumanBetLabel();
+        if (human.isInRound()) {
+            updateHumanBetLabel();
+        }
         updateCurrentBetLabel();
         updatePotLabel();
         updateWinnerLabel();
@@ -153,10 +157,15 @@ public class PokerWorld extends World
 
     
     public void bettingRound() {
-        currentBet = 0;
         waitForHumanInput = true;
         
         int roundPlayerIndex = 0;
+        
+        if (human.isInRound()) {
+            updateHumanBetLabel();
+        }
+        updateCurrentBetLabel();
+        updatePotLabel();
         
         while (roundPlayerIndex < players.size()) {
             Player currentPlayer = players.get(roundPlayerIndex);
@@ -175,7 +184,9 @@ public class PokerWorld extends World
             }
         }
         
-        updateHumanBetLabel();
+        if (human.isInRound()) {
+            updateHumanBetLabel();
+        }
         updateCurrentBetLabel();
         updatePotLabel();
     }
@@ -186,6 +197,8 @@ public class PokerWorld extends World
             if (Greenfoot.isKeyDown("c")) {
                 human.call();
                 pot += currentBet;
+                callChips = human.getChips();
+                callChips -= currentBet;
                 human.setChips(human.getChips() - currentBet);
                 chipSound.play();
                 waitForHumanInput = false;
@@ -200,11 +213,6 @@ public class PokerWorld extends World
                 human.fold();
                 slideSound.play();
                 waitForHumanInput = false;
-            }
-            
-            if (human.getChips() <= 0) {
-                players.remove(human);
-                break;
             }
         }
     }
@@ -224,10 +232,6 @@ public class PokerWorld extends World
             bot.raise();
             currentBet += 20;
             pot += currentBet;
-        }
-        
-        if (bot.getChips() <= 0) {
-            players.remove(bot);
         }
     }
     
@@ -282,8 +286,24 @@ public class PokerWorld extends World
             pot = 0; // Reset the pot
         }
         
+        List<Player> playersToRemove = new ArrayList<>();
+        for (Player player : players) {
+            if (player.getChips() <= 0) {
+                playersToRemove.add(player);
+                if (player.isHuman()) {
+                    CardBack cardBack1 = new CardBack();
+                    addObject(cardBack1, 275, 350);
+                    CardBack cardBack2 = new CardBack();
+                    addObject(cardBack2, 325, 350);
+                    humanBetLabel.setValue("You're out!");
+                }
+            }
+        }
+        
+        players.removeAll(playersToRemove);
+        bots.removeAll(playersToRemove);
+        
         winnerLabel.setValue(winner + " Wins!");
-        updateHumanBetLabel();
         updateCurrentBetLabel();
         updatePotLabel();
     }
@@ -362,11 +382,15 @@ public class PokerWorld extends World
     
     // Deal personal cards to players
     private void dealPersonalCards() {
-        dealCardToPlayer(human, 275, 350);  // Deal a card to the player
-        dealCardToPlayer(human, 325, 350);  // Deal another card to the player
+        if (human.getChips() > 0) {  // Check if human player has chips
+            dealCardToPlayer(human, 275, 350);  // Deal a card to the player
+            dealCardToPlayer(human, 325, 350);  // Deal another card to the player
+        }
         for (Bot bot : bots) {
-            dealToBot(bot);  // Deal cards to bots
-            dealToBot(bot);  // Deal second card to bots
+            if (bot.getChips() > 0) {  // Check if bot has chips
+                dealToBot(bot);  // Deal cards to bots
+                dealToBot(bot);  // Deal second card to bots
+            }
         }
     }
     
@@ -389,13 +413,6 @@ public class PokerWorld extends World
     private void dealToBot(Bot bot) {
         Card card = dealer.dealCard();
         bot.addCard(card);
-    }
-    
-    // Deal community cards
-    private void dealAllCards() {
-        for (int i= 0; i < 5; i++) {
-            allCards.add(dealer.dealCard());  // Deal a card to the community cards
-        }
     }
     
     private void updateHumanBetLabel() {

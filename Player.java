@@ -33,7 +33,7 @@ public class Player {
     }
     
     public int getChips() {
-        return chips;
+        return this.chips;
     }
     
     public String getName() {
