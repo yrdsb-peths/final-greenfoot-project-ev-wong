@@ -15,7 +15,6 @@ public class Player {
     
     public Player() {
         hand = new ArrayList<Card>();  
-        inRound = true;
         currentBet = 0;
     }
     
@@ -40,7 +39,7 @@ public class Player {
     }
     
     public boolean isHuman() {
-        return false;  
+        return this.isHuman();  
     }
     
     public boolean isSmallBlind() {
@@ -60,7 +59,7 @@ public class Player {
     }
     
     public boolean isInRound() {
-        return inRound;
+        return this.inRound;
     }
     
     public void setInRound(boolean inRound) {
@@ -69,6 +68,10 @@ public class Player {
     
     public int getCurrentBet() {
         return currentBet;
+    }
+    
+    public void clearHand() {
+        hand.clear(); // Assuming 'hand' is the list of cards in the player's hand
     }
     
     public void setCurrentBet(int currentBet) {
@@ -83,7 +86,7 @@ public class Player {
     }
     
     public void fold() {
-        inRound = false;
+        this.inRound = false;
     }
     
     public void raise() {

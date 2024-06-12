@@ -20,4 +20,9 @@ public class Dealer
     public void dealToPlayer(Player player) {
         player.addCard(dealCard());  // Give a card to player
     }
+    
+    public void resetDeck() {
+        deck = new Deck();
+        deck.shuffle();
+    }
 }

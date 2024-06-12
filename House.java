@@ -20,4 +20,8 @@ public class House
     public List<Card> getTableCards() {
         return table;
     }
+    
+    public void clearTableCards() {
+        table.clear(); // Assuming 'tableCards' is the list of community cards
+    }
 }

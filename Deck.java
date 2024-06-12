@@ -12,7 +12,8 @@ public class Deck extends Actor
     
     // Constructor to initialize the deck with a full set of cards
     public Deck() {
-        cards = new ArrayList<Card>();  // Initialize the list
+        cards = new ArrayList<>();  // Initialize the list
+        cards.clear();
         String[] suits = {"spades", "hearts", "clubs", "diamonds"};  // Array of card suits
         for (String suit : suits) {
             for (int rank = 1; rank <= 13; rank++) {
@@ -22,14 +23,13 @@ public class Deck extends Actor
         shuffle();  // Shuffle the deck
     }
     
+    public Card removeCard() {
+        return cards.remove(0);  // Remove and return the first card from the deck
+    }
+    
     // Method to shuffl e the deck
     public void shuffle() {
         Collections.shuffle(cards);  // Use Java's Collections.shuffle() method
-    }
-    
-    // Method to deal a card from the deck
-    public Card removeCard() {
-        return cards.remove(0);  // Remove and return the first card from the deck
     }
 
     // Act method

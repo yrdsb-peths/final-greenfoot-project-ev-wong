@@ -24,6 +24,10 @@ public class Bot extends Player
         this.chips = 1000;  // Initialize chips (this seems to be missing initialization)
     }
     
+    public boolean isHuman() {
+        return false;  
+    }
+    
     // Getter for the bot's name
     public String getName() {
         return name;  // Return the bot's name

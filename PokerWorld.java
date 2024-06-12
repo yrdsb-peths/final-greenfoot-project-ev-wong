@@ -23,6 +23,7 @@ public class PokerWorld extends World
     public int humanBetAmount; //human bet
     private boolean roundInProgress; // Tracker
     private boolean waitForHumanInput;
+    private boolean musicPlaying;
     private String smallBlindPlayer;
     private String bigBlindPlayer;
     
@@ -42,6 +43,8 @@ public class PokerWorld extends World
     GreenfootSound shuffleSound = new GreenfootSound("cardShuffle.mp3");
     GreenfootSound music = new GreenfootSound("bgmusic.mp3");
     GreenfootSound dealSound = new GreenfootSound("cardPlace1.mp3");
+    GreenfootSound chipSound = new GreenfootSound("chipsStack1.mp3");
+    GreenfootSound slideSound = new GreenfootSound("cardSlide1.mp3");
 
     
     /**
@@ -51,24 +54,23 @@ public class PokerWorld extends World
     {    
         super(600, 400, 1); 
         prepare();  // Initialize the world
-        dealer = new Dealer();  // Create a dealer
         player = new Player(); // Create a player
-        house = new House(); // Create house
         bots = new ArrayList<Bot>();  // Initialize list for bots
-        allCards = new ArrayList<Card>();  // Initialize list for community cards
         players = new ArrayList<>();  // Initialize list for all players
         sb = 0;
         bb = 1;        
-        roundInProgress = false;
+        
         waitForHumanInput = false; 
+        roundInProgress = false;
+        musicPlaying = false;
         
         currentPlayerIndex = 0;  // Start with the first player
         playerChips = 1000;  // Set initial chips for the player
         currentBet = 0;  // Initialize current bet
         pot = 0;  // Initialize pot
         
-        players.add(new HumanPlayer());  // Add human player to the list
         addBots(7);  // Add bots to the game
+        players.add(new HumanPlayer());  // Add human player to the list
         
         addObject(smallBlindLabel, 80, 340);
         addObject(bigBlindLabel, 73, 370);
@@ -77,41 +79,95 @@ public class PokerWorld extends World
     
     // Act method for game logic
     public void act() {
-        music.play();
-        if (roundInProgress == false) {
-            roundInProgress = true;
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-            assignBlinds();
-            deductBlindChips();
-            shuffleSound.play();
-            dealPersonalCards();
-            waitForHumanInput = true;
-            bettingRound();
-            dealTableCardOne();
-            bettingRound();
-            dealTableCardTwo();
-            bettingRound();
-            dealTableCardThree();
-            bettingRound();
-            calculateWinner();
-            rotatePositions();  
+        if (musicPlaying == false) {
+            music.play();
+            musicPlaying = true;
+        }
+        resetDeckAndHands();
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        assignBlinds();
+        deductBlindChips();
+        shuffleSound.play();
+        putInRound();
+        dealPersonalCards();
+        Greenfoot.delay(50);
+        bettingRound();
+        dealTableCardOne();
+        Greenfoot.delay(50);
+        bettingRound();
+        dealTableCardTwo();
+        Greenfoot.delay(50);
+        bettingRound();
+        dealTableCardThree();
+        Greenfoot.delay(50);
+        bettingRound();
+        calculateWinner();
+        Greenfoot.delay(50);
+    }
+    
+    private void resetDeckAndHands() {
+        dealer = new Dealer();
+        dealer.resetDeck(); // Reinitialize the dealer to reset the deck
+        house = new House(); // Create house
+        allCards = new ArrayList<Card>();  // Initialize list for community cards
+        for (Player player : players) {
+            player.clearHand(); // Clear the hand of each player
+            player.setInRound(true); // Reset the in-round status of each player
+        }
+        house.clearTableCards(); // Clear the community cards from the table
+        allCards.clear(); // Clear the allCards list if used
+        CardBack cardBack1 = new CardBack();
+        addObject(cardBack1,300,160);
+        CardBack cardBack2 = new CardBack();
+        addObject(cardBack2,350,160);
+        CardBack cardBack3 = new CardBack();
+        addObject(cardBack3,250,160);
+        CardBack cardBack4 = new CardBack();
+        addObject(cardBack4,200,160);
+        CardBack cardBack5 = new CardBack();
+        addObject(cardBack5,400,160); 
+    }
+    
+    public void putInRound() {
+        for (Player player : players) {
+            player.setInRound(true);
         }
     }
+
     
     public void bettingRound() {
         currentBet = 0;
+        waitForHumanInput = true;
+        
         for (Player player : players) {
             player.setCurrentBet(0);
         }
         
-        int roundPlayerIndex = currentPlayerIndex;
+        int roundPlayerIndex = 0;
+        System.out.println(players);
         
-        for (int i = 0; i < players.size(); i++) {
+        for (int i = -1; i <= players.size(); i++) {
             Player currentPlayer = players.get(roundPlayerIndex);
             if (currentPlayer.isInRound()){
-                playerTurn(currentPlayer);
+                if (currentPlayer.isHuman()) {
+                    humanTurn();
+                } else if (i == 1){
+                    playerTurn(currentPlayer);
+                    currentPlayer.setInRound(false);
+                } else {
+                    playerTurn(currentPlayer);
+                }
+                
+                if (roundPlayerIndex < players.size()) {
+                   roundPlayerIndex++; 
+                }
+                
+                if (!currentPlayer.isInRound()) {
+                    players.remove(currentPlayer);
+                }
             }
         }
+        
     }
     
     private void botTurn(Bot bot) {
@@ -131,15 +187,21 @@ public class PokerWorld extends World
     }
     
     private void humanTurn() {
-        if(Greenfoot.isKeyDown("c")) {
-            player.call();
-            waitForHumanInput = false;
-        } else if (Greenfoot.isKeyDown("r")) {
-            player.raise();
-            waitForHumanInput = false;
-        } else if (Greenfoot.isKeyDown("f")) {
-            player.fold();
-            waitForHumanInput = false;
+        while(waitForHumanInput == true) {    
+            if(Greenfoot.isKeyDown("c")) {
+                player.call();
+                chipSound.play();
+                waitForHumanInput = false;
+            } else if (Greenfoot.isKeyDown("r")) {
+                player.raise();
+                chipSound.play();
+                waitForHumanInput = false;
+            } else if (Greenfoot.isKeyDown("f")) {
+                player.fold();
+                player.setInRound(false);
+                slideSound.play();
+                waitForHumanInput = false;
+            }
         }
     }
     
@@ -211,14 +273,26 @@ public class PokerWorld extends World
        //Get player name
        this.smallBlindPlayer = smallBlindPlayer.getName();
        this.bigBlindPlayer = bigBlindPlayer.getName();
-       // Update labels
-       smallBlindLabel.setValue("Small Blind: " + this.smallBlindPlayer);
-       bigBlindLabel.setValue("Big Blind: " + this.bigBlindPlayer);
-    }
-    
-    private void rotatePositions() {
-        sb += 1;
-        bb += 1;
+       
+       if (this.smallBlindPlayer == null) {
+           smallBlindLabel.setValue("Small Blind: Player");
+       } else {
+           smallBlindLabel.setValue("Small Blind: " + this.smallBlindPlayer);
+       }
+       
+       if (this.bigBlindPlayer  == null) {
+           bigBlindLabel.setValue("Big Blind: Player");
+       } else {
+           bigBlindLabel.setValue("Big Blind: " + this.bigBlindPlayer);
+       }
+       
+       if (sb == 8) {
+           sb = 0;
+       }
+       
+       if (bb == 8) {
+           bb = 0;
+       }
     }
         
     private void deductBlindChips() {
@@ -246,9 +320,10 @@ public class PokerWorld extends World
     private void addBots(int numberOfBots) {
         for (int i = 1; i <= numberOfBots; i++) {
             Bot bot = new Bot("Bot" + i);
-            bots.add(new Bot("Bot" + i));  // Add bot to the bot list
-            players.add(new Bot("Bot" + i));  // Add bot to the players list
             bot.setChips(1000);
+            bots.add(bot);  // Add bot to the bot list
+            players.add(bot);  // Add bot to the players list
+            
         }
     }
     
@@ -297,15 +372,6 @@ public class PokerWorld extends World
     private void prepare()
     {
         // Add card backs to the world
-        CardBack cardBack1 = new CardBack();
-        addObject(cardBack1,300,160);
-        CardBack cardBack2 = new CardBack();
-        addObject(cardBack2,350,160);
-        CardBack cardBack3 = new CardBack();
-        addObject(cardBack3,250,160);
-        CardBack cardBack4 = new CardBack();
-        addObject(cardBack4,200,160);
-        CardBack cardBack5 = new CardBack();
-        addObject(cardBack5,400,160);  
+         
     }
 }
