@@ -1,10 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class CardBack here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * CardBack class represents the visual display of the back of a card.
  */
 public class CardBack extends Actor
 {

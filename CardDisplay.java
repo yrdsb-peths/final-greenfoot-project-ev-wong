@@ -1,7 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * CardDisplay class represents the visual display of a card.
+ * CardDisplay class represents the visual display of the front of a card.
  */
 public class CardDisplay extends Actor
 {

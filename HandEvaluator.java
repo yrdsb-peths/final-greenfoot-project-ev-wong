@@ -1,5 +1,8 @@
 import java.util.*;
 
+/*
+ * Hand evaluator to determine winner
+ */
 public class HandEvaluator {
     public static int evaluateHand(List<Card> hand) {
         Map<Integer, Integer> rankCounts = new HashMap<>();

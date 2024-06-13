@@ -1,4 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +10,9 @@ import java.util.Random;
 public class PokerWorld extends World
 {
     private List<Player> players;  // List to hold all players
-    private Dealer dealer;  // Dealer object
-    private Player player;  // Human player
-    private House house; //House
+    private Dealer dealer;  // Dealer 
+    private Player player;  // Player
+    private House house; // House
     private List<Bot> bots;  // List to hold all bots
     private List<Card> allCards;  // List to hold all community cards
     private int currentPlayerIndex;  // Index of the current player
@@ -22,8 +22,8 @@ public class PokerWorld extends World
     private int sb; //small blind
     private int randomNum; //random number
     public int humanBetAmount; //human bet
-    private int humanChips;
-    private int callChips;
+    private int humanChips; // Human chips
+    private int callChips; // call chips
     private boolean roundInProgress; // Tracker
     private boolean waitForHumanInput;
     private boolean musicPlaying;
@@ -32,13 +32,13 @@ public class PokerWorld extends World
     private HumanPlayer human;
     
     // Labels to display bot actions
-    Label inGameLabel = new Label ("", 17);
+    Label inGameLabel = new Label ("", 17); // label to show who's in game
     Label smallBlindLabel = new Label("Small Blind: ", 20);
     Label bigBlindLabel = new Label("Big Blind: ", 20);
     Label humanBetLabel = new Label("Your chips: " + humanChips, 20);
     Label currentBetLabel = new Label("Current bet : " + currentBet, 20);
     Label potLabel = new Label("Pot : " + pot, 20);
-    Label winnerLabel = new Label("", 30);
+    Label winnerLabel = new Label("", 30); //label to display winners
     
     //Sound effects
     GreenfootSound shuffleSound = new GreenfootSound("cardShuffle.mp3");
@@ -47,10 +47,6 @@ public class PokerWorld extends World
     GreenfootSound chipSound = new GreenfootSound("chipsStack1.mp3");
     GreenfootSound slideSound = new GreenfootSound("cardSlide1.mp3");
 
-    
-    /**
-     * Constructor for objects of class PokerWorld.
-     */
     public PokerWorld()
     {    
         super(600, 400, 1); 
@@ -198,6 +194,7 @@ public class PokerWorld extends World
                 human.setChips(human.getChips() - currentBet);
                 chipSound.play();
                 waitForHumanInput = false;
+                break;
             } else if (Greenfoot.isKeyDown("r")) {
                 human.raise();
                 currentBet += 20;
@@ -205,11 +202,14 @@ public class PokerWorld extends World
                 human.setChips(human.getChips() - currentBet);
                 chipSound.play();
                 waitForHumanInput = false;
+                break;
             } else if (Greenfoot.isKeyDown("f")) {
                 human.fold();
                 slideSound.play();
                 waitForHumanInput = false;
+                break;
             }
+            Greenfoot.delay(1); 
         }
     }
     
